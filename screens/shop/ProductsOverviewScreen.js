@@ -19,21 +19,22 @@ import * as productsActions from "../../store/actions/products";
 
 const ProductOverviewScreen = (props) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState();
   const products = useSelector((state) => state.products.availableProducts);
   const dispatch = useDispatch();
 
   const loadProducts = useCallback(async () => {
-    console.log("LOAD PRODUCTS");
     setError(null);
-    setIsLoading(true);
+    setIsRefreshing(true);
+
     try {
       await dispatch(productsActions.fetchProducts());
     } catch (err) {
       setError(err.message);
     }
 
-    setIsLoading(false);
+    setIsRefreshing(false);
   }, [dispatch, setIsLoading, setError]);
 
   useEffect(() => {
@@ -48,7 +49,10 @@ const ProductOverviewScreen = (props) => {
   }, [loadProducts]);
 
   useEffect(() => {
-    loadProducts();
+    setIsLoading(true);
+    loadProducts().then(() => {
+      setIsLoading(false);
+    });
   }, [dispatch, loadProducts]);
 
   const selectItemHandler = (id, title) => {
@@ -88,6 +92,8 @@ const ProductOverviewScreen = (props) => {
   }
   return (
     <FlatList
+      onRefresh={loadProducts}
+      refreshing={isRefreshing}
       data={products}
       keyExtractor={(item) => item.id}
       renderItem={(itemData) => (
@@ -154,3 +160,15 @@ const styles = StyleSheet.create({
   },
 });
 export default ProductOverviewScreen;
+
+
+/*
+const funcAsync = async () => {
+  await delaySecond(3);
+  return "async";
+};
+
+delaySecond가 수행이 완료되길 기다렸다가 완료 됐을때 
+다음 순서인 return "async"를 수행.
+
+*/
