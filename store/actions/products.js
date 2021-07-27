@@ -39,16 +39,18 @@ export const fetchProducts = () => {
 };
 
 export const deleteProduct = (productId) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    const token = getState().auth.token;
+
     const response = await fetch(
-      `https://third-app2-default-rtdb.firebaseio.com/products/${productId}.json`,
+      `https://third-app2-default-rtdb.firebaseio.com/products/${productId}.json?auth=${token}`, //Authenticate with an ID token
       {
         method: "DELETE",
       }
     );
 
-    if(!response.ok){
-      throw new Error('Something went wrong!');
+    if (!response.ok) {
+      throw new Error("Something went wrong!");
     }
 
     dispatch({ type: DELETE_PRODUCT, pid: productId });
@@ -56,9 +58,10 @@ export const deleteProduct = (productId) => {
 };
 
 export const createProduct = (title, description, imageUrl, price) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    const token = getState().auth.token;
     const response = await fetch(
-      "https://third-app2-default-rtdb.firebaseio.com/products.json",
+      `https://third-app2-default-rtdb.firebaseio.com/products.json?auth=${token}`, //Authenticate with an ID token
       {
         method: "POST",
         headers: {
@@ -90,9 +93,13 @@ export const createProduct = (title, description, imageUrl, price) => {
 };
 
 export const updateProduct = (id, title, description, imageUrl) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    // console.log(getState());
+
+    const token = getState().auth.token;
+
     const response = await fetch(
-      `https://third-app2-default-rtdb.firebaseio.com/products/${id}.json`,
+      `https://third-app2-default-rtdb.firebaseio.com/products/${id}.json?auth=${token}`, //Authenticate with an ID token
       {
         method: "PATCH",
         headers: {
@@ -106,8 +113,8 @@ export const updateProduct = (id, title, description, imageUrl) => {
       }
     );
 
-    if(!response.ok){
-      throw new Error('Something went wrong!');
+    if (!response.ok) {
+      throw new Error("Something went wrong!");
     }
 
     dispatch({

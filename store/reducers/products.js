@@ -1,6 +1,5 @@
 import PRODUCTS from "../../data/dummy-data";
 import Product from "../../models/product";
-import { REMOVE_FROM_CART } from "../actions/cart";
 import {
   CREATE_PRODUCT,
   DELETE_PRODUCT,
